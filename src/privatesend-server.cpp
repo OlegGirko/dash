@@ -797,14 +797,14 @@ void CPrivateSendServer::RelayFinalTransaction(const CTransaction& txFinal)
 {
     g_connman->ForEachNode([&txFinal, this](CNode* pnode) {
         if(pnode->nVersion >= MIN_PRIVATESEND_PEER_PROTO_VERSION)
-            pnode->PushMessage(NetMsgType::DSFINALTX, nSessionID, txFinal);
+            g_connman->PushMessage(pnode, NetMsgType::DSFINALTX, nSessionID, txFinal);
     });
 }
 
 void CPrivateSendServer::PushStatus(CNode* pnode, PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID)
 {
     if(!pnode) return;
-    pnode->PushMessage(NetMsgType::DSSTATUSUPDATE, nSessionID, (int)nState, (int)vecEntries.size(), (int)nStatusUpdate, (int)nMessageID);
+    g_connman->PushMessage(pnode, NetMsgType::DSSTATUSUPDATE, nSessionID, (int)nState, (int)vecEntries.size(), (int)nStatusUpdate, (int)nMessageID);
 }
 
 void CPrivateSendServer::RelayStatus(PoolStatusUpdate nStatusUpdate, PoolMessage nMessageID)
@@ -819,7 +819,7 @@ void CPrivateSendServer::RelayCompletedTransaction(PoolMessage nMessageID)
 {
     g_connman->ForEachNode([nMessageID, this](CNode* pnode) {
         if(pnode->nVersion >= MIN_PRIVATESEND_PEER_PROTO_VERSION)
-            pnode->PushMessage(NetMsgType::DSCOMPLETE, nSessionID, (int)nMessageID);
+            g_connman->PushMessage(pnode, NetMsgType::DSCOMPLETE, nSessionID, (int)nMessageID);
     });
 }
 
