@@ -1215,10 +1215,6 @@ void CConnman::ThreadSocketHandler()
                 {
                     TRY_LOCK(pnode->cs_vSend, lockSend);
                     if (lockSend) {
-                        if (pnode->nOptimisticBytesWritten) {
-                            RecordBytesSent(pnode->nOptimisticBytesWritten);
-                            pnode->nOptimisticBytesWritten = 0;
-                        }
                         if (!pnode->vSendMsg.empty()) {
                             FD_SET(pnode->hSocket, &fdsetSend);
                             continue;
@@ -2674,7 +2670,6 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     nMinPingUsecTime = std::numeric_limits<int64_t>::max();
     vchKeyedNetGroup = CalculateKeyedNetGroup(addr);
     id = idIn;
-    nOptimisticBytesWritten = 0;
     nLocalServices = nLocalServicesIn;
 
     GetRandBytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
