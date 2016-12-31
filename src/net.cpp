@@ -773,7 +773,7 @@ int CNetMessage::readData(const char *pch, unsigned int nBytes)
 
 
 // requires LOCK(cs_vSend)
-size_t SocketSendData(CNode *pnode)
+size_t CConnman::SocketSendData(CNode *pnode)
 {
     std::deque<CSerializeData>::iterator it = pnode->vSendMsg.begin();
     size_t nSentSize = 0;
@@ -790,6 +790,7 @@ size_t SocketSendData(CNode *pnode)
             if (pnode->nSendOffset == data.size()) {
                 pnode->nSendOffset = 0;
                 pnode->nSendSize -= data.size();
+                pnode->fPauseSend = pnode->nSendSize > nSendBufferMaxSize;
                 it++;
             } else {
                 // could not send full message; stop sending more
@@ -1312,8 +1313,9 @@ void CConnman::ThreadSocketHandler()
                 TRY_LOCK(pnode->cs_vSend, lockSend);
                 if (lockSend) {
                     size_t nBytes = SocketSendData(pnode);
-                    if (nBytes)
+                    if (nBytes) {
                         RecordBytesSent(nBytes);
+                    }
                 }
             }
 
@@ -1889,7 +1891,7 @@ void CConnman::ThreadMessageHandler()
                 if (lockRecv)
                 {
                     bool fMoreNodeWork = GetNodeSignals().ProcessMessages(pnode, *this, flagInterruptMsgProc);
-                    fMoreWork |= (fMoreNodeWork && pnode->nSendSize < GetSendBufferSize());
+                    fMoreWork |= (fMoreNodeWork && !pnode->fPauseSend);
                 }
             }
             if (flagInterruptMsgProc)
@@ -2667,6 +2669,7 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     id = idIn;
     nLocalServices = nLocalServicesIn;
     fPauseRecv = false;
+    fPauseSend = false;
     nProcessQueueSize = 0;
 
     GetRandBytes((unsigned char*)&nLocalHostNonce, sizeof(nLocalHostNonce));
@@ -2797,6 +2800,9 @@ void CConnman::PushMessage(CNode* pnode, CDataStream& strm, const std::string& s
         //log total amount of bytes per command
         pnode->mapSendBytesPerMsgCmd[sCommand] += strm.size();
         pnode->nSendSize += strm.size();
+
+        if (pnode->nSendSize > nSendBufferMaxSize)
+            pnode->fPauseSend = true;
 
         // If write queue empty, attempt "optimistic write"
         if (optimisticSend == true)

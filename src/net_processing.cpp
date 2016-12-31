@@ -793,15 +793,13 @@ static void RelayAddress(const CAddress& addr, bool fReachable, CConnman& connma
 void static ProcessGetData(CNode* pfrom, const Consensus::Params& consensusParams, CConnman& connman, std::atomic<bool>& interruptMsgProc)
 {
     std::deque<CInv>::iterator it = pfrom->vRecvGetData.begin();
-    unsigned int nMaxSendBufferSize = connman.GetSendBufferSize();
-
     vector<CInv> vNotFound;
 
     LOCK(cs_main);
 
     while (it != pfrom->vRecvGetData.end()) {
         // Don't bother if send buffer is too full to respond anyway
-        if (pfrom->nSendSize >= nMaxSendBufferSize)
+        if (pfrom->fPauseSend)
             break;
 
         const CInv &inv = *it;
@@ -2166,7 +2164,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 bool ProcessMessages(CNode* pfrom, CConnman& connman, std::atomic<bool>& interruptMsgProc)
 {
     const CChainParams& chainparams = Params();
-    unsigned int nMaxSendBufferSize = connman.GetSendBufferSize();
     //
     // Message format
     //  (4) message start
@@ -2187,7 +2184,7 @@ bool ProcessMessages(CNode* pfrom, CConnman& connman, std::atomic<bool>& interru
     if (!pfrom->vRecvGetData.empty()) return true;
 
         // Don't bother if send buffer is too full to respond anyway
-        if (pfrom->nSendSize >= nMaxSendBufferSize)
+        if (pfrom->fPauseSend)
             return false;
 
         std::list<CNetMessage> msgs;
