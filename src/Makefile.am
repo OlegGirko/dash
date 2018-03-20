@@ -157,6 +157,7 @@ BITCOIN_CORE_H = \
   net_processing.h \
   netaddress.h \
   netbackend.h \
+  netbackend/tcp.h \
   netbase.h \
   netfulfilledman.h \
   netmessagemaker.h \
@@ -422,6 +423,7 @@ libdash_common_a_SOURCES = \
   key.cpp \
   keystore.cpp \
   netaddress.cpp \
+  netbackend/tcp.cpp \
   netbase.cpp \
   protocol.cpp \
   scheduler.cpp \
