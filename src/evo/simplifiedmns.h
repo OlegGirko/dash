@@ -26,7 +26,7 @@ public:
     bool isValid;
 
 public:
-    CSimplifiedMNListEntry() {}
+    CSimplifiedMNListEntry() : service{CService::DefaultBackend} {}
     CSimplifiedMNListEntry(const CDeterministicMN& dmn);
 
     bool operator==(const CSimplifiedMNListEntry& rhs) const

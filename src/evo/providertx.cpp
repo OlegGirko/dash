@@ -114,7 +114,7 @@ bool CheckProRegTx(const CTransaction& tx, const CBlockIndex* pindexPrev, CValid
 
     // It's allowed to set addr to 0, which will put the MN into PoSe-banned state and require a ProUpServTx to be issues later
     // If any of both is set, it must be valid however
-    if (ptx.addr != CService() && !CheckService(tx.GetHash(), ptx, state)) {
+    if (ptx.addr != CService(CService::DefaultBackend) && !CheckService(tx.GetHash(), ptx, state)) {
         return false;
     }
 

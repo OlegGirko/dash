@@ -39,7 +39,7 @@ struct CActiveMasternodeInfo {
     // Initialized while registering Masternode
     uint256 proTxHash;
     COutPoint outpoint;
-    CService service;
+    CService service{CService::DefaultBackend};
 };
 
 

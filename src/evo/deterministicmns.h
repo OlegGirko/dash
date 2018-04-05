@@ -51,8 +51,9 @@ public:
     CScript scriptOperatorPayout;
 
 public:
-    CDeterministicMNState() {}
+    CDeterministicMNState() : addr{CService::DefaultBackend} {}
     CDeterministicMNState(const CProRegTx& proTx)
+    : addr{CService::DefaultBackend}
     {
         keyIDOwner = proTx.keyIDOwner;
         pubKeyOperator = proTx.pubKeyOperator;
@@ -62,6 +63,7 @@ public:
     }
     template <typename Stream>
     CDeterministicMNState(deserialize_type, Stream& s)
+    : addr{CService::DefaultBackend}
     {
         s >> *this;
     }
@@ -90,7 +92,7 @@ public:
     void ResetOperatorFields()
     {
         pubKeyOperator = CBLSPublicKey();
-        addr = CService();
+        addr = CService(CService::DefaultBackend);
         scriptOperatorPayout = CScript();
         nRevocationReason = CProUpRevTx::REASON_NOT_SPECIFIED;
     }
@@ -370,9 +372,8 @@ public:
 
 private:
     template <typename T>
-    void AddUniqueProperty(const CDeterministicMNCPtr& dmn, const T& v)
+    void AddUniqueProperty(const CDeterministicMNCPtr& dmn, const T& v, const T& nullValue = T())
     {
-        static const T nullValue;
         assert(v != nullValue);
 
         auto hash = ::SerializeHash(v);
@@ -385,9 +386,8 @@ private:
         mnUniquePropertyMap = mnUniquePropertyMap.set(hash, newEntry);
     }
     template <typename T>
-    void DeleteUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue)
+    void DeleteUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue, const T& nullValue = T())
     {
-        static const T nullValue;
         assert(oldValue != nullValue);
 
         auto oldHash = ::SerializeHash(oldValue);
@@ -400,19 +400,18 @@ private:
         }
     }
     template <typename T>
-    void UpdateUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue, const T& newValue)
+    void UpdateUniqueProperty(const CDeterministicMNCPtr& dmn, const T& oldValue, const T& newValue, const T& nullValue = T())
     {
         if (oldValue == newValue) {
             return;
         }
-        static const T nullValue;
 
         if (oldValue != nullValue) {
-            DeleteUniqueProperty(dmn, oldValue);
+            DeleteUniqueProperty(dmn, oldValue, nullValue);
         }
 
         if (newValue != nullValue) {
-            AddUniqueProperty(dmn, newValue);
+            AddUniqueProperty(dmn, newValue, nullValue);
         }
     }
 };

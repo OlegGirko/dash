@@ -25,7 +25,7 @@ public:
     uint16_t nType{0};                                     // only 0 supported for now
     uint16_t nMode{0};                                     // only 0 supported for now
     COutPoint collateralOutpoint{uint256(), (uint32_t)-1}; // if hash is null, we refer to a ProRegTx output
-    CService addr;
+    CService addr{CService::DefaultBackend};
     CKeyID keyIDOwner;
     CBLSPublicKey pubKeyOperator;
     CKeyID keyIDVoting;
@@ -72,7 +72,7 @@ public:
 public:
     uint16_t nVersion{CURRENT_VERSION}; // message version
     uint256 proTxHash;
-    CService addr;
+    CService addr{CService::DefaultBackend};
     CScript scriptOperatorPayout;
     uint256 inputsHash; // replay protection
     CBLSSignature sig;

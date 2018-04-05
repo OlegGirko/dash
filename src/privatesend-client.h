@@ -50,7 +50,7 @@ private:
 
 public:
     CPendingDsaRequest() :
-        addr(CService()),
+        addr(CService(CService::DefaultBackend)),
         dsa(CPrivateSendAccept()),
         nTimeCreated(0)
     {

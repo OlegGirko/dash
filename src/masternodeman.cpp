@@ -914,14 +914,15 @@ void CMasternodeMan::ProcessMasternodeConnections(CConnman& connman)
     });
 }
 
-std::pair<CService, std::set<uint256> > CMasternodeMan::PopScheduledMnbRequestConnection()
+boost::optional<std::pair<CService, std::set<uint256> > >
+CMasternodeMan::PopScheduledMnbRequestConnection()
 {
     LOCK(cs);
     if (deterministicMNManager->IsDeterministicMNsSporkActive()) {
-        return std::make_pair(CService(), std::set<uint256>());
+        return boost::none;
     }
     if(listScheduledMnbRequestConnections.empty()) {
-        return std::make_pair(CService(), std::set<uint256>());
+        return boost::none;
     }
 
     std::set<uint256> setResult;
@@ -949,11 +950,11 @@ void CMasternodeMan::ProcessPendingMnbRequests(CConnman& connman)
     if (deterministicMNManager->IsDeterministicMNsSporkActive())
         return;
 
-    std::pair<CService, std::set<uint256> > p = PopScheduledMnbRequestConnection();
-    if (!(p.first == CService() || p.second.empty())) {
-        if (connman.IsMasternodeOrDisconnectRequested(p.first)) return;
-        mapPendingMNB.insert(std::make_pair(p.first, std::make_pair(GetTime(), p.second)));
-        connman.AddPendingMasternode(p.first);
+    auto p = PopScheduledMnbRequestConnection();
+    if (p != boost::none && !p->second.empty()) {
+        if (connman.IsMasternodeOrDisconnectRequested(p->first)) return;
+        mapPendingMNB.insert(std::make_pair(p->first, std::make_pair(GetTime(), p->second)));
+        connman.AddPendingMasternode(p->first);
     }
 
     std::map<CService, std::pair<int64_t, std::set<uint256> > >::iterator itPendingMNB = mapPendingMNB.begin();

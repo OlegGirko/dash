@@ -627,7 +627,7 @@ public:
     double dPingWait;
     double dMinPing;
     std::string addrLocal;
-    CAddress addr;
+    CAddress addr{CAddress::DefaultBackend};
 };
 
 

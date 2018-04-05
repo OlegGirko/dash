@@ -393,8 +393,8 @@ void CDeterministicMNList::AddMN(const CDeterministicMNCPtr& dmn)
     assert(!mnMap.find(dmn->proTxHash));
     mnMap = mnMap.set(dmn->proTxHash, dmn);
     AddUniqueProperty(dmn, dmn->collateralOutpoint);
-    if (dmn->pdmnState->addr != CService()) {
-        AddUniqueProperty(dmn, dmn->pdmnState->addr);
+    if (dmn->pdmnState->addr != CService(CService::DefaultBackend)) {
+        AddUniqueProperty(dmn, dmn->pdmnState->addr, CService(CService::DefaultBackend));
     }
     AddUniqueProperty(dmn, dmn->pdmnState->keyIDOwner);
     if (dmn->pdmnState->pubKeyOperator.IsValid()) {
@@ -411,7 +411,7 @@ void CDeterministicMNList::UpdateMN(const uint256& proTxHash, const CDeterminist
     dmn->pdmnState = pdmnState;
     mnMap = mnMap.set(proTxHash, dmn);
 
-    UpdateUniqueProperty(dmn, oldState->addr, pdmnState->addr);
+    UpdateUniqueProperty(dmn, oldState->addr, pdmnState->addr, CService(CService::DefaultBackend));
     UpdateUniqueProperty(dmn, oldState->keyIDOwner, pdmnState->keyIDOwner);
     UpdateUniqueProperty(dmn, oldState->pubKeyOperator, pdmnState->pubKeyOperator);
 }
@@ -421,8 +421,8 @@ void CDeterministicMNList::RemoveMN(const uint256& proTxHash)
     auto dmn = GetMN(proTxHash);
     assert(dmn != nullptr);
     DeleteUniqueProperty(dmn, dmn->collateralOutpoint);
-    if (dmn->pdmnState->addr != CService()) {
-        DeleteUniqueProperty(dmn, dmn->pdmnState->addr);
+    if (dmn->pdmnState->addr != CService(CService::DefaultBackend)) {
+        DeleteUniqueProperty(dmn, dmn->pdmnState->addr, CService(CService::DefaultBackend));
     }
     DeleteUniqueProperty(dmn, dmn->pdmnState->keyIDOwner);
     if (dmn->pdmnState->pubKeyOperator.IsValid()) {
@@ -601,7 +601,7 @@ bool CDeterministicMNManager::BuildNewListFromBlock(const CBlock& block, const C
             CDeterministicMNState dmnState = *dmn->pdmnState;
             dmnState.nRegisteredHeight = nHeight;
 
-            if (proTx.addr == CService()) {
+            if (proTx.addr == CService(CService::DefaultBackend)) {
                 // start in banned pdmnState as we need to wait for a ProUpServTx
                 dmnState.nPoSeBanHeight = nHeight;
             }

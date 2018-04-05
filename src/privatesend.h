@@ -141,7 +141,7 @@ public:
         vecTxDSIn(std::vector<CTxDSIn>()),
         vecTxOut(std::vector<CTxOut>()),
         txCollateral(MakeTransactionRef()),
-        addr(CService())
+        addr(CService(CService::DefaultBackend))
     {
     }
 
@@ -149,7 +149,7 @@ public:
         vecTxDSIn(vecTxDSIn),
         vecTxOut(vecTxOut),
         txCollateral(MakeTransactionRef(txCollateral)),
-        addr(CService())
+        addr(CService(CService::DefaultBackend))
     {
     }
 

@@ -126,7 +126,7 @@ struct masternode_info_t
     int64_t sigTime = 0; //mnb message time
 
     COutPoint outpoint{};
-    CService addr{};
+    CService addr{CService::DefaultBackend};
     CPubKey pubKeyCollateralAddress{}; // this will be invalid/unset when the network switches to deterministic MNs (luckely it's only important for the broadcast hash)
     CPubKey pubKeyMasternode{}; // this will be invalid/unset when the network switches to deterministic MNs (luckely it's only important for the broadcast hash)
     CKeyID keyIDCollateralAddress{}; // this is only used in compatibility code and won't be used when spork15 gets activated
@@ -386,7 +386,7 @@ class CMasternodeVerification
 public:
     COutPoint masternodeOutpoint1{};
     COutPoint masternodeOutpoint2{};
-    CService addr{};
+    CService addr{CService::DefaultBackend};
     int nonce{};
     int nBlockHeight{};
     std::vector<unsigned char> vchSig1{};
