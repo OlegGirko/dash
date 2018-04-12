@@ -312,6 +312,7 @@ class CAddress : public CService
 {
 public:
     CAddress();
+    CAddress(const CNetBackend& netbackend);
     explicit CAddress(CService ipIn, ServiceFlags nServicesIn);
 
     void Init();
