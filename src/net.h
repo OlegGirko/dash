@@ -400,10 +400,12 @@ public:
     void WakeMessageHandler();
 private:
     struct ListenSocket {
+        const CNetBackend& backend;
         SOCKET socket;
         bool whitelisted;
 
-        ListenSocket(SOCKET socket_, bool whitelisted_) : socket(socket_), whitelisted(whitelisted_) {}
+        ListenSocket(const CNetBackend& backend_, SOCKET socket_, bool whitelisted_)
+        : backend(backend_), socket(socket_), whitelisted(whitelisted_) {}
     };
 
     void ThreadOpenAddedConnections();
