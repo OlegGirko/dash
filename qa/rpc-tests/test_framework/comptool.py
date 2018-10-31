@@ -212,7 +212,7 @@ class TestManager(object):
             )
 
         # --> error if not requested
-        if not wait_until(blocks_requested, attempts=20*num_blocks, sleep=0.1):
+        if not wait_until(blocks_requested, attempts=50*num_blocks, sleep=0.1):
             raise AssertionError("Not all nodes requested block")
 
         # Send getheaders message
