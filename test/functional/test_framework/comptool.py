@@ -210,7 +210,7 @@ class TestManager(object):
             )
 
         # --> error if not requested
-        wait_until(blocks_requested, attempts=20*num_blocks, sleep=0.1, lock=mininode_lock)
+        wait_until(blocks_requested, attempts=50*num_blocks, sleep=0.1, lock=mininode_lock)
 
         # Send getheaders message
         [ c.cb.send_getheaders() for c in self.connections ]
