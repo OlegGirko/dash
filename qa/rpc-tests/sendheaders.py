@@ -546,7 +546,7 @@ class SendHeadersTest(BitcoinTestFramework):
             with mininode_lock:
                 test_node.last_getheaders = None
             test_node.send_header_for_blocks([blocks[1]])
-            test_node.wait_for_getheaders(timeout=1)
+            test_node.wait_for_getheaders(timeout=10)
             test_node.send_header_for_blocks(blocks)
             test_node.wait_for_getdata([x.sha256 for x in blocks])
             [ test_node.send_message(msg_block(x)) for x in blocks ]
