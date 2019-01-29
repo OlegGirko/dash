@@ -36,7 +36,7 @@ define $(package)_config_cmds
   export CXXFLAGS="$($(package)_cxxflags) $($(package)_cppflags)" && \
   export LDFLAGS="$($(package)_ldflags)" && \
   mkdir -p build && cd build && \
-  cmake ../ $($(package)_config_opts)
+  cmake3 ../ $($(package)_config_opts)
 endef
 
 define $(package)_build_cmds
