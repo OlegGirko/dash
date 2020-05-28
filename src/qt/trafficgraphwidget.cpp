@@ -9,6 +9,7 @@
 #include <boost/bind.hpp>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QColor>
 #include <QTimer>
 
