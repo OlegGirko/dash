@@ -10,6 +10,8 @@
 #include <qt/guiutil.h>
 #include <qt/peertablemodel.h>
 
+#include <boost/bind.hpp>
+
 #include <chain.h>
 #include <chainparams.h>
 #include <checkpoints.h>
