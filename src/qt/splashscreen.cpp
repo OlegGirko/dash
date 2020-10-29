@@ -22,6 +22,8 @@
 #include <ui_interface.h>
 #include <version.h>
 
+#include <boost/bind.hpp>
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopWidget>

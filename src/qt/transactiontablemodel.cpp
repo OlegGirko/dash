@@ -18,6 +18,8 @@
 #include <uint256.h>
 #include <util.h>
 
+#include <boost/bind.hpp>
+
 #include <QColor>
 #include <QDateTime>
 #include <QDebug>
