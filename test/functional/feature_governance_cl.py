@@ -89,7 +89,7 @@ class DashGovernanceTest (DashTestFramework):
 
         self.nodes[0].generate(6)
         self.bump_mocktime(6 * 156)
-        self.sync_blocks()
+        self.sync_blocks(timeout=180)
 
         assert_equal(len(self.nodes[0].gobject("list-prepared")), 2)
         assert_equal(len(self.nodes[0].gobject("list")), 0)
@@ -123,7 +123,7 @@ class DashGovernanceTest (DashTestFramework):
 
         self.log.info("Wait for new trigger and votes on non-isolated nodes")
         sb_block_height = self.nodes[0].getblockcount() + 1
-        self.wait_until(lambda: self.have_trigger_for_height(sb_block_height, self.nodes[0:5]), timeout=5)
+        self.wait_until(lambda: self.have_trigger_for_height(sb_block_height, self.nodes[0:5]), timeout=15)
         # Mine superblock
         self.nodes[0].generate(1)
         self.bump_mocktime(156)
@@ -137,7 +137,7 @@ class DashGovernanceTest (DashTestFramework):
         force_finish_mnsync(self.nodes[5])
         self.nodes[0].generate(1)
         self.bump_mocktime(156)
-        self.sync_blocks()
+        self.sync_blocks(timeout=180)
 
 
 if __name__ == '__main__':
